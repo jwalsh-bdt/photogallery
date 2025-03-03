@@ -91,7 +91,7 @@ const Home = ({ featuredPhotos = [], isCartOpen = false }: HomeProps) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="text-2xl font-bold text-white">
-            PhotoArt
+            Black Dog Gallery
           </a>
 
           {/* Desktop Navigation */}
