@@ -1,9 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingCart, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, Menu, X, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import UserAccountMenu from "./auth/UserAccountMenu";
+import AuthForm from "./auth/AuthForm";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Dialog, DialogContent } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 import PhotoGrid from "./gallery/PhotoGrid";
 import PhotoDetailModal from "./gallery/PhotoDetailModal";
 import PrintCustomizer from "./print/PrintCustomizer";
@@ -18,6 +28,10 @@ interface HomeProps {
 }
 
 const Home = ({ featuredPhotos = [], isCartOpen = false }: HomeProps) => {
+  const navigate = useNavigate();
+  const { user, login, register, socialLogin, logout, isLoading, error } =
+    useAuth();
+
   // State for UI interactions
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -26,6 +40,8 @@ const Home = ({ featuredPhotos = [], isCartOpen = false }: HomeProps) => {
   const [customizingPhoto, setCustomizingPhoto] = useState<string | null>(null);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [activeCollection, setActiveCollection] = useState<string>("all");
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   // Available collections
   const collections: Collection[] = [
@@ -126,6 +142,21 @@ const Home = ({ featuredPhotos = [], isCartOpen = false }: HomeProps) => {
               )}
               <span className="sr-only">Cart</span>
             </Button>
+
+            {/* Account Button */}
+            {user ? (
+              <UserAccountMenu user={user} onLogout={logout} />
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-gray-800"
+                onClick={() => setShowAuthModal(true)}
+              >
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+              </Button>
+            )}
 
             {/* Mobile Menu Button */}
             <Button
@@ -521,6 +552,49 @@ const Home = ({ featuredPhotos = [], isCartOpen = false }: HomeProps) => {
           }}
         />
       )}
+
+      {/* Auth Modal */}
+      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">Account</DialogTitle>
+            <DialogDescription className="text-center">
+              Login or create an account to track your orders
+            </DialogDescription>
+          </DialogHeader>
+
+          <AuthForm
+            onLogin={async (data) => {
+              try {
+                await login(data.email, data.password);
+                setShowAuthModal(false);
+                setAuthError(null);
+              } catch (err: any) {
+                setAuthError(err.message || "Failed to login");
+              }
+            }}
+            onRegister={async (data) => {
+              try {
+                await register(data.name, data.email, data.password);
+                setShowAuthModal(false);
+                setAuthError(null);
+              } catch (err: any) {
+                setAuthError(err.message || "Failed to register");
+              }
+            }}
+            onSocialLogin={async (provider) => {
+              try {
+                await socialLogin(provider);
+                // The modal will be closed after redirect and successful auth
+              } catch (err: any) {
+                setAuthError(err.message || `Failed to login with ${provider}`);
+              }
+            }}
+            isLoading={isLoading}
+            error={authError}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
