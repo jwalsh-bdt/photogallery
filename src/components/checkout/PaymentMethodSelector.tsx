@@ -137,7 +137,11 @@ const PaymentMethodSelector = ({
         </RadioGroup>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button type="button" className="w-full sm:w-auto">
+        <Button
+          type="button"
+          className="w-full sm:w-auto"
+          onClick={() => (window.location.href = "/checkout?step=shipping")}
+        >
           Continue to Shipping
         </Button>
       </CardFooter>

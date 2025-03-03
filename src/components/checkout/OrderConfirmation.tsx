@@ -163,11 +163,18 @@ const OrderConfirmation = ({
       </Card>
 
       <div className="flex flex-col md:flex-row gap-4 justify-center">
-        <Button asChild variant="outline" className="w-full md:w-auto">
-          <Link to="/orders">View Order History</Link>
+        <Button
+          variant="outline"
+          className="w-full md:w-auto"
+          onClick={() => (window.location.href = "/account/orders")}
+        >
+          View Order History
         </Button>
-        <Button asChild className="w-full md:w-auto">
-          <Link to="/">Continue Shopping</Link>
+        <Button
+          className="w-full md:w-auto"
+          onClick={() => (window.location.href = "/")}
+        >
+          Continue Shopping
         </Button>
       </div>
 

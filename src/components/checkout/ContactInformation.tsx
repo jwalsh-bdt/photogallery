@@ -347,7 +347,14 @@ const ContactInformation = ({
             <Button type="button" variant="outline" onClick={onBack}>
               Back
             </Button>
-            <Button type="submit">Continue</Button>
+            <Button
+              type="submit"
+              onClick={() =>
+                (window.location.href = "/checkout?step=confirmation")
+              }
+            >
+              Continue
+            </Button>
           </div>
         </form>
       </Form>

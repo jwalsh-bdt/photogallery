@@ -10,11 +10,22 @@ import OrderConfirmation from "@/components/checkout/OrderConfirmation";
 import PaymentError from "@/components/checkout/PaymentError";
 import AccountCreationModal from "@/components/auth/AccountCreationModal";
 import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState<string>("cart");
+  const [currentStep, setCurrentStep] = useState<string>(() => {
+    // Check URL for step parameter
+    const params = new URLSearchParams(window.location.search);
+    const stepParam = params.get("step");
+    return stepParam &&
+      ["cart", "payment", "shipping", "contact", "confirmation"].includes(
+        stepParam,
+      )
+      ? stepParam
+      : "cart";
+  });
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [paymentError, setPaymentError] = useState<boolean>(false);
 
@@ -54,20 +65,28 @@ const CheckoutPage = () => {
 
     if (stepIndex <= currentIndex) {
       setCurrentStep(stepId);
+      // Update URL with the new step
+      window.history.pushState({}, "", `/checkout?step=${stepId}`);
     }
   };
 
   const handleNextStep = () => {
     const currentIndex = steps.findIndex((step) => step.id === currentStep);
     if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1].id);
+      const nextStep = steps[currentIndex + 1].id;
+      setCurrentStep(nextStep);
+      // Update URL with the new step
+      window.history.pushState({}, "", `/checkout?step=${nextStep}`);
     }
   };
 
   const handlePreviousStep = () => {
     const currentIndex = steps.findIndex((step) => step.id === currentStep);
     if (currentIndex > 0) {
-      setCurrentStep(steps[currentIndex - 1].id);
+      const prevStep = steps[currentIndex - 1].id;
+      setCurrentStep(prevStep);
+      // Update URL with the new step
+      window.history.pushState({}, "", `/checkout?step=${prevStep}`);
     }
   };
 
@@ -136,25 +155,18 @@ const CheckoutPage = () => {
           <div className="space-y-6">
             <PaymentMethodSelector />
             <div className="flex justify-between">
-              <button
-                onClick={handlePreviousStep}
-                className="px-4 py-2 border rounded-md hover:bg-gray-100"
-              >
+              <Button variant="outline" onClick={handlePreviousStep}>
                 Back to Cart
-              </button>
+              </Button>
               <div className="space-x-4">
-                <button
+                <Button
+                  variant="outline"
                   onClick={handleSimulatePaymentError}
-                  className="px-4 py-2 border border-red-300 text-red-600 rounded-md hover:bg-red-50"
+                  className="border-red-300 text-red-600 hover:bg-red-50"
                 >
                   Simulate Error
-                </button>
-                <button
-                  onClick={handleNextStep}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-                >
-                  Continue to Shipping
-                </button>
+                </Button>
+                <Button onClick={handleNextStep}>Continue to Shipping</Button>
               </div>
             </div>
           </div>
@@ -164,18 +176,10 @@ const CheckoutPage = () => {
           <div className="space-y-6">
             <ShippingOptions />
             <div className="flex justify-between">
-              <button
-                onClick={handlePreviousStep}
-                className="px-4 py-2 border rounded-md hover:bg-gray-100"
-              >
+              <Button variant="outline" onClick={handlePreviousStep}>
                 Back to Payment
-              </button>
-              <button
-                onClick={handleNextStep}
-                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-              >
-                Continue to Contact
-              </button>
+              </Button>
+              <Button onClick={handleNextStep}>Continue to Contact</Button>
             </div>
           </div>
         );

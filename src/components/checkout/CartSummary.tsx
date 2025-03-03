@@ -138,7 +138,11 @@ const CartSummary = ({
       </CardContent>
       <CardFooter className="flex justify-end">
         <div className="w-full max-w-md">
-          <Button className="w-full" disabled={items.length === 0}>
+          <Button
+            className="w-full"
+            disabled={items.length === 0}
+            onClick={() => (window.location.href = "/checkout?step=payment")}
+          >
             Proceed to Payment
           </Button>
         </div>

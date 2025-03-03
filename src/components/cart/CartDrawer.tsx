@@ -185,7 +185,11 @@ const CartDrawer = ({
               </div>
             </div>
 
-            <Button className="w-full" size="lg">
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={() => (window.location.href = "/checkout")}
+            >
               <CreditCard className="mr-2 h-5 w-5" />
               Checkout
             </Button>

@@ -6,6 +6,7 @@ import Contact from "./components/contact";
 import ProfilePage from "./pages/account/profile";
 import OrdersPage from "./pages/account/orders";
 import AuthCallback from "./pages/auth/callback";
+import CheckoutPage from "./pages/checkout";
 import { AuthProvider } from "./context/AuthContext";
 import routes from "tempo-routes";
 
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/account/profile" element={<ProfilePage />} />
             <Route path="/account/orders" element={<OrdersPage />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
